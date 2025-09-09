@@ -1,14 +1,19 @@
-import csv
+
 import re
+import csv
 import hashlib
 from typing import List
 
+
+# Password Class
 class Password:
     def __init__(self, title, url, username, password):
         self.title = title
         self.url = url
         self.username = username
         self.password = password
+
+# User Class
 class User:
     def __init__(self, email, password, file_name="passwords.csv"):
         self.email = email
@@ -113,33 +118,25 @@ class User:
             writer = csv.writer(file)
             writer.writerows(new_list)
 
-            
-                
-    
-    
-        
 
+
+# Password Manager Class
 class PasswordManager:
-    
     def __init__(self, file_name="userdata.csv"):
-        self.file_name = file_name
         self.logged_in_user: User | None = None
-
+        self.file_name = file_name
     def register(self, email, password):
-  
         regex = r'^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w+$'
         if re.match(regex, email):
-     
-             with open(self.file_name, 'r') as file:
-                  reader = csv.reader(file)
-                  user_found = False
-                  for row in reader:
+            with open(self.file_name, 'r') as file:
+                reader = csv.reader(file)
+                user_found = False
+                for row in reader:
                     if row[0] == email:
                         print("User already exists. Try loggin in.\n")
                         user_found = True
                         break
-      
-                  if not user_found:
+                if not user_found:
                     hash = hashlib.sha256(str(password).encode()).hexdigest()
                     with open(self.file_name, 'a', newline='') as file:
                         writer = csv.writer(file)
@@ -147,34 +144,18 @@ class PasswordManager:
                         print("Signed up successfully")
         else:
             print("Invalid email address provided")
-
     def login(self, email, password):
         regex = r'^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w+$'
         hash = hashlib.sha256(str(password).encode()).hexdigest()
         if re.match(regex, email):
+            hash = hashlib.sha256(str(password).encode()).hexdigest()
             with open(self.file_name, 'r', newline='') as file:
                 reader = csv.reader(file)
                 for row in reader:
                     if row[0] == email and row[1] == hash:
                         self.logged_in_user = User(email, password)
                         print("Logged in")
-                        return True
-                else:
-                        print("Incorrect user or password")
-
+                        break
+       
         else:
             print("Invalid email address provided")
-
-
-
-       
-        
-   
-    
-
-                
-
-                    
-                
-
-
